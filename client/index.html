@@ -3,11 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Monster cards</title>
+    <title>The cards</title>
+    <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link
-        href="https://fonts.googleapis.com/css?family=Amiri|Sorts+Mill+Goudy|Almendra|Della+Respira&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Amiri|Sorts+Mill+Goudy|Almendra|Della+Respira&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/cards.css">
     <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -15,9 +14,13 @@
 <body>
     <main id="app">
     <div v-if="showform">
-          Raw Content:<br>
-           <textarea name="source_textarea" rows="20" cols="120" v-model="source" value="qqqq"></textarea> <br>
+          Creature JSON:<br>
+          <textarea name="source_textarea" rows="20" cols="120" v-model="source" value="qqqq"></textarea> <br>
           <button v-on:click="showCards">Render cards</button>
+          <br>
+          SRD20 table:<br>
+          <textarea name="source_srd_textarea" rows="3" cols="20" v-model="source_srd" value=""></textarea> <br>
+          <button v-on:click="importSrd">Import</button>
     </div>
     <div v-if="showcards">
         <div class="grid-container">

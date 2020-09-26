@@ -1,33 +1,42 @@
 <!doctype html>
 <html class="no-js" lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>The cards</title>
-    <meta name="description" content="">
+    <title>Monster cards</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Amiri|Sorts+Mill+Goudy|Almendra|Della+Respira&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/cards.css">
-    <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
+
 <body>
     <main id="app">
-    <div v-if="showform">
-          Creature JSON:<br>
-          <textarea name="source_textarea" rows="20" cols="120" v-model="source" value="qqqq"></textarea> <br>
-          <button v-on:click="showCards">Render cards</button>
-          <br>
-          SRD20 table:<br>
-          <textarea name="source_srd_textarea" rows="3" cols="20" v-model="source_srd" value=""></textarea> <br>
-          <button v-on:click="importSrd">Import</button>
-    </div>
-    <div v-if="showcards">
-        <div class="grid-container">
-            <card v-for="entry in cards" v-bind:entry="entry" />
+        <div v-if="showform">
+          <div style="float: left; margin: 20px;">
+            <h1>Json Creatures:</h1>
+            <textarea name="source_textarea" rows="40" cols="120" v-model="source" value="qqqq"></textarea>
+            <br>
+            <button v-on:click="showCards" width="100%">Render cards</button>
+          </div>
+          <div style="float: right; margin: 20px;">
+            <h1>Importer (experimental)</h1>
+            Copy table from <a href="https://www.d20srd.org/indexes/monsters.htm">SRD 20 monsters</a> including title
+            <br>
+            <textarea name="source_srd_textarea" rows="30" cols="60" v-model="source_srd" value=""></textarea>
+            <br style="width: 100%">
+            <button v-on:click="importSrd">Import</button>
+          </div>
         </div>
-        <button v-on:click="showForms">Edit</button></div>
+        <div v-if="showcards">
+            <div class="grid-container">
+                <card v-for="entry in cards" v-bind:entry="entry" />
+            </div>
+            <button v-on:click="showForms">Edit</button>
+        </div>
     </main>
     <script src="js/cards.js"></script>
 </body>
+
 </html>

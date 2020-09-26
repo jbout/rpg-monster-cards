@@ -14,16 +14,17 @@
 </head>
 <body>
     <main id="app">
-    <div v-if="showform">
-          Raw Content:<br>
-           <textarea name="source_textarea" rows="20" cols="120" v-model="source" value="qqqq"></textarea> <br>
-          <button v-on:click="showCards">Render cards</button>
-    </div>
-    <div v-if="showcards">
-        <div class="grid-container">
-            <card v-for="entry in cards" v-bind:entry="entry" />
-        </div>
-        <button v-on:click="showForms">Edit</button></div>
+      <div v-if="showform">
+            <h1>Json Creatures:</h1>
+             <textarea name="source_textarea" rows="40" cols="120" v-model="source" value="qqqq"></textarea> <br>
+             <button v-on:click="showCards">Render cards</button>
+      </div>
+      <div v-if="showcards">
+          <div class="grid-container">
+              <card v-for="entry in cards" v-bind:entry="entry" />
+          </div>
+          <button v-on:click="showForms">Edit</button>
+      </div>
     </main>
     <script src="js/cards.js"></script>
 </body>

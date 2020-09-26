@@ -1,0 +1,226 @@
+@import 'inc/bootstrap';
+@import 'inc/normalize';
+
+$colorIndex: 0;
+
+.grid-container {
+	display: grid;
+	grid-gap: $gap * 1px;
+  	grid-template-columns: repeat(auto-fill, minmax(#{map-get($cardContainer, width) * 1px}, 1fr));
+	margin: ($gap / 2) * 1px;
+}
+
+.card-container {
+	display: flex;
+	justify-content: space-around;
+	margin-bottom: 50px;
+}
+
+.recto, .verso {
+	width: map-get($card, width) * 1px;
+	height: map-get($card, height) * 1px;
+	overflow: hidden;
+	position: relative;
+	background: url(../img/bg.png);
+	box-shadow: 3px 3px 5px 0 rgba(0,0,0,.2);
+}
+
+.frame {
+	position: absolute;
+	pointer-events: none;
+	top: 0;
+	width: 100%;
+	height: 100%;
+    text-shadow: 0 0 30px rgba(0,0,0,1);
+    display: flex;
+    justify-content: center;
+	& > img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		filter: hue-rotate(getHueRotation($colorIndex));
+	}
+}
+
+h2 {
+	padding: 0;
+	margin: 0;
+	position: relative;
+	&.badge-top {
+		margin-top: 8px;
+	}
+	&.badge-bottom {
+		top: -6px;
+	}
+}
+
+
+.recto {
+	display: flex;
+	align-items: center;
+	.antlitz-outer {
+		padding: $boxPadding * .8px;
+		display: flex;
+		justify-content: center;
+		max-height: 100%;
+		max-width:  100%;
+	}
+	.antlitz {
+		min-height: 100%;
+		mix-blend-mode: multiply;
+	}
+	.frame {
+		align-items: flex-end;
+	}
+}
+
+.verso {
+	position: relative;
+	.badge-cr {
+		z-index: 2;
+		display: inline-block;
+		position: absolute;
+		right: 6px;
+		bottom: 6px;
+		border-radius: 50%;
+	}
+	.frame {
+		align-items: flex-start;
+	}
+}
+
+
+.card-properties-outer {
+    padding: $boxPadding * 1px;
+}
+
+.card-properties {
+	width: 100%;
+	margin-top: 28px;
+	td {
+		text-align: left;
+		vertical-align: top;
+		padding: 3px 6px;
+		font-size: 1.3rem;
+		&.value {
+			white-space: nowrap;
+			color: getColor($colorIndex, text);
+			font-weight: bold;
+			.value-part {
+				&:before {
+					content: '|';
+					display: inline-block;
+					color: #999;
+					height: 10px;
+					width: 1px;
+					padding: 0 10px 0 3px;
+				}
+				&:first-of-type{
+					&::before {
+						content: normal;
+					}
+				}
+			}
+		}
+	}
+	tbody {
+		tr {
+			&:last-of-type {
+				td {
+					padding-top: 10px;
+				}
+			}
+			&.pre-ultimate {
+				td {
+					padding-bottom: 10px;
+					border-bottom: 1px solid getColor($colorIndex, border);
+				}
+			}
+		}
+	}
+}
+
+
+[class^="badge-"], [class*=" badge-"] {
+	border: {
+		style: ridge;
+		width: 3px;
+		color: getColor($colorIndex, border);
+		radius: 10% 20%;
+	}
+	text-align: center;
+	background: getColor($colorIndex, detail-bg);
+	color: getColor($colorIndex, detail-text);
+	padding: 2px 10px;
+	font: bold 1.8rem $headingFont;
+	text-shadow: 1px 1px 0 rgba(255,255,255,0.2);
+	display: inline-block;
+	box-shadow: 3px 3px 5px 0 rgba(0,0,0,.2);
+}
+
+.property-details {
+	left: -100000px;
+	background: getColor($colorIndex, detail-bg);
+	color: getColor($colorIndex, detail-text);
+	position: absolute;
+	bottom: 0;
+	margin: $boxPadding * 1px;
+	width: calc(100% - #{$boxPadding * 2px});
+	padding: 8px;
+	table {
+		width: 100%;
+	}
+}
+
+.detail-trigger {
+	cursor: pointer;
+	.detail-text {
+		border-bottom: 1px dashed getColor($colorIndex, border);
+	}
+	&:hover {
+		.property-details {
+			left: 0;
+		}
+	}
+}
+
+// color specific classes
+@each $index, $rgb in $palette {
+	.color-#{$index} {
+		.frame {
+			& > img {
+				filter: hue-rotate(getHueRotation($index));
+			}
+		}
+		.card-properties {
+			tbody {
+				tr {
+					&.pre-ultimate {
+						td {
+							border-bottom: 1px solid getColor($index, border);
+						}
+					}
+				}
+			}
+		}
+		.property-details {
+			background-color: getColor($index, detail-bg);
+			color: getColor($index, detail-text);
+		}
+
+		.detail-trigger {
+			.detail-text {
+				border-bottom-color: getColor($index, border);
+			}
+		}
+		[class^="badge-"], [class*=" badge-"] {
+			border-color: getColor($index, border);
+			background-color: getColor($index, detail-bg);
+			color: getColor($index, detail-text);
+        }
+	}
+}
+
+@media print {
+	@import 'inc/print';
+}

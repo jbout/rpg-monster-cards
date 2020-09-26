@@ -1,0 +1,6 @@
+// this is thought for preview convenience only
+
+@import 'inc/bootstrap';
+body.print {
+    @import 'inc/print';
+}

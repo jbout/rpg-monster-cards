@@ -1,0 +1,63 @@
+@import './bootstrap';
+
+@page {
+	size: A4 landscape;
+}
+
+.recto {
+	transform: rotate(180deg);
+}
+
+.property-details {
+	display: none;
+}
+
+.detail-trigger {
+	cursor: default;
+	.detail-text {
+		border: none;
+	}
+}
+
+.grid-container {
+    $scale: .8;
+    transform: scale($scale);
+    transform-origin: top left;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+.card-container {
+	display: block;
+}
+
+.recto, .verso {
+    box-shadow: none;
+}
+
+.verso {
+    margin-top: 10px;
+    overflow: visible;
+	&::before {
+	    content: '';
+	    display: block;
+		width: 100%;
+	    height: 10px;
+        position: absolute;
+        top: -10px;
+        border-top: 1px #999 solid;
+        border-bottom: 1px #999 solid;
+        background-image: url(../img/frame.png);
+		box-sizing: border-box;
+	}
+}
+
+@each $index, $rgb in $palette {
+	.color-#{$index} {
+		.verso {
+			&::before {
+				filter: hue-rotate(getHueRotation($index));
+				border-color: getColor($index, border);
+			}
+		}
+	}
+}

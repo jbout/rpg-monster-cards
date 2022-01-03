@@ -1,0 +1,12 @@
+$gap: 16;
+$boxPadding: 30;
+
+$card: (
+	width: 264,
+	height: 396,
+	margin: $gap / 2
+);
+
+$cardContainer: (
+	width: map-get($card, width) * 2
+);

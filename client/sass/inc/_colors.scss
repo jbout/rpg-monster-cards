@@ -1,0 +1,68 @@
+
+$palette : (
+     0: rgb(24, 107, 91),  // 6
+     1: rgb(23, 74, 105),  // 7
+     2: rgb(22, 40, 100),  // 8
+     3: rgb(51, 22, 97),   // 9
+     4: rgb(106, 24, 95),  // 10
+     5: rgb(127, 28, 47),  // 11
+     6: rgb(134, 58, 30),  // 0
+     7: rgb(134, 83, 30),  // 1
+     8: rgb(134, 105, 30), // 2
+     9: rgb(134, 127, 30), // 3
+    10: rgb(99, 118, 26),  // 4
+    11: rgb(45, 104, 23),  // 5
+);
+
+// this is lame, but SASS won't let me do it otherwise
+$complements : (
+     0: map-get($palette, 6),
+     1: map-get($palette, 7),
+     2: map-get($palette, 8),
+     3: map-get($palette, 9),
+     4: map-get($palette, 10),
+     5: map-get($palette, 11),
+     6: map-get($palette, 0),
+     7: map-get($palette, 1),
+     8: map-get($palette, 2),
+     9: map-get($palette, 3),
+    10: map-get($palette, 4),
+    11: map-get($palette, 5),
+);
+
+@function getColor($index, $keyWord, $complement: false) {
+    $count: length($palette);
+    $baseColor: map-get($palette, $index);
+    $hueIndex: $index;
+    @if($complement == true){
+        $baseColor: map-get($complements, $index);
+        $hueIndex: ($index + ($count / 2)) % $count;
+    }
+
+
+    @if($keyWord == 'border') {
+        @return $baseColor;
+    }
+    @else if($keyWord == 'text'){
+        @return $baseColor;
+    }
+    @else if($keyWord == 'detail-bg'){
+        @return mix(white, $baseColor, 50);
+    }
+    @else if($keyWord == 'detail-text'){
+        @return $baseColor;
+    }
+    @else {
+        @return $baseColor;
+    }
+};
+
+@function getHueRotation($index, $complement: false) {
+
+    $count: length($palette);
+    @if($complement == true){
+        $index: ($index + ($count / 2)) % $count;
+    }
+
+    @return $index * (360 / length($palette)) * 1deg;
+};

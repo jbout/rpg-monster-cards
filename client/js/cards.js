@@ -1,6 +1,13 @@
 Vue.component('card', {
   props: ['entry'],
-  template: `<section class="card-container color-1">
+	mounted() {
+		this.$root.$on('updatecard', (card, jsonstring) => {
+			if (this === card) {
+				this.saveme(jsonstring)
+			}
+		})
+	},
+  template: `<section class="card-container color-1" v-on:click="editme" v-on:updatecard="saveme">
             <div class="recto decorated-container">
                 <div class="antlitz-outer">
                     <img class="antlitz" :src="entry.img" alt="" />
@@ -68,110 +75,98 @@ Vue.component('card', {
                     <div class="badge-cr">{{entry.cr}}</div>
                 </div>
             </div>
-        </section>`
+        </section>`,
+	methods:{
+      editme : function() {
+		this.$root.$emit('edit-intend', this)
+      },
+      saveme : function(jsonstring) {
+			console.log("saved")
+			this.entry = JSON.parse(jsonstring)
+      }
+   }
 })
 
-function convert(copypaste) {
-  var data = copypaste.split(/\r?\n/);
-  var creatures = [];
-  data.shift().split(/\t/).forEach(function(title) {
-      if (title.trim().length > 0) {
-          creatures.push({
-              name : title.replace('click to see monster', '').trim(),
-              img : ""
-          });
-      }
-  });
+MonsterLibrary = Vue.component('MonsterLibrary', {
+	data: function () {
+		return {
+			data : []
+		}
+	},
+	mounted () {
+	  $.getJSON('monsters.json', json => {
+		this.data = json
+	  })
+	},
+  	template: `<div  style="float: left; margin: 20px;" class="monster-list">
+  				<h3>Add monsters</h3>
+  				<ul>
+                <monster v-for="monsterdata in data" v-bind:monsterdata="monsterdata" v-on:addmonster = "propagate"/>
+  				</ul>
+               </div>`,
+	methods: {
+		propagate : function(monster) {
+	        this.$emit('addmonster', monster)
+		}
+	},
+	components : {
+		'monster' : {
+			props: ['monsterdata'],
+			template: `<li><button v-on:click="addCard">{{monsterdata.name}}</button></li>`,
+			methods: {
+				addCard : function(card) {
+			        this.$emit('addmonster', this.monsterdata)
+				}
+			},
+		},
+	}
+})
 
-  function map(values, key) {
-      for (i = 0; i < values.length; i++) {
-          creatures[i][key] = values[i].trim();
-      }
-  }
-
-  var mappings = {
-      "Size/Type:" : "base",
-      "Initiative:" : "initiative_bonus",
-      "Challenge Rating:" : "cr",
-      "Special Qualities:" : "notes"
-  }
-
-  function extract(key, value) {
-      switch (key) {
-          case "Saves:":
-                  var saves = value.match(/Fort ([+-].+), Ref ([+-].+), Will ([-+].+)/);
-                  return [
-                      ['fort',saves[1].trim()],
-                      ['reflex', saves[2].trim()],
-                      ['will', saves[3].trim()]
-                  ]
-              case "Abilities:":
-                  var attr = value.match(/Str (.+), Dex (.+), Con (.+), Int (.+), Wis (.+), Cha (.+)/);
-                  return [
-                    ['str', attr[1].trim()],
-                    ['dex', attr[2].trim()],
-                    ['con', attr[3].trim()],
-                    ['int', attr[4].trim()],
-                    ['wis', attr[5].trim()],
-                    ['cha', attr[6].trim()]
-                  ]
-              case "Hit Dice:":
-                  const match = value.match(/\(([0-9]+) hp\)/);
-                  return [['hp', match[1].trim()]];
-              case "Armor Class:":
-                  const ac = value.match(/^\s*([0-9]+) /);
-                  return [['ac', ac[1].trim()]];
-              case "Speed:":
-                  const speed = value.match(/^\s*([0-9]+) ft/);
-                  return [['speed', speed[1].trim()]];
-              case "Full Attack:":
-                  return [['attack_parameters', value.replace(' melee ', '').trim()]];
-              default:
-                  if (mappings[key]) {
-                      return [[mappings[key], value.trim()]];
-                  } else {
-                      return [];
-                  }
-          }
-  }
-
-  data.forEach(function(line) {
-      var row = line.split(/\t/);
-      title = row.shift().trim();
-      if (row.length == creatures.length) {
-          for (i = 0; i < row.length; i++) {
-              var values = extract(title, row[i]);
-              for (var [key, value] of values) {
-                  creatures[i][key] = value;
-              }
-          }
-      } else {
-          console.log(row);
-      }
-  });
-  return JSON.stringify(creatures, null, 2);
-}
+CardEditor = CardEditor = Vue.component('CardEditor', {
+	data: function () {
+		return {
+			raw: '',
+			card: null
+		}
+	},
+	mounted() {
+		this.$root.$on('edit-intend', (monster) => {this.loadcard(monster)})
+	},
+	template: `<div style="float: right; margin: 20px;" v-if="raw">
+              <h1>edit</h1>
+	      <textarea name="raw_textarea" rows="20" cols="40" v-model="raw"></textarea>
+	      <br>
+              <button width="100%" v-on:click="savecard">save</button>
+            </div>`,
+	methods:{
+		loadcard : function(card) {
+			console.log("edit called")
+			this.card = card
+			this.raw = JSON.stringify(card.entry, null, 2)
+		},
+		savecard : function(card) {
+			console.log("save called")
+			this.$root.$emit('updatecard', this.card, this.raw)
+			this.raw = ''
+			this.card = null
+		}
+	}
+})
 
 var app = new Vue({
 	el : '#app',
 	data : {
-		showform : true,
-		showcards : false,
+		cards: [],
 		source : '[\n  {\n    "name": "Goblin",\n    "base": "Small Humanoid",\n    "hp": "5",\n    "current_hp": "5",\n    "ac": "15",\n    "initiative_bonus": "1",\n    "attack_parameters": "club +2/d6",\n    "str": "11",\n    "dex": "13",\n    "con": "12",\n    "int": "10",\n    "wis": "9",\n    "cha": "6",\n    "fort": "3",\n    "reflex": "1",\n    "will": "-1",\n    "speed": "30",\n    "cr": "⅓",\n    "img": "http://www.wizards.com/dnd/images/MM35_gallery/MM35_PG133.jpg",\n    "notes": "Hide +5, Listen +2, Move Silently +5, Ride +4, Spot +2"\n  }\n]',
     source_srd : ''
 	},
 	methods : {
-		showCards : function() {
-			this.cards = JSON.parse(this.source)
-			this.showform = false
-			this.showcards = true
+		addCard : function(card) {
+			this.cards.push(card)
 		},
-		showForms : function() {
-			this.showform = true
-			this.showcards = false
-		},
-    importSrd : function() {
-      this.source = convert(this.source_srd)
-    }
+	},
+	components : {
+		'monsterlibrary' : MonsterLibrary,
+		'cardeditor' : CardEditor
 	}
 });

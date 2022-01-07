@@ -170,7 +170,8 @@ h2.badge-bottom {
     display: flex;
     justify-content: center;
     max-height: 100%;
-    max-width: 100%
+    max-width: 100%;
+    margin: auto
 }
 
 .recto .antlitz {
@@ -578,6 +579,10 @@ h2.badge-bottom {
 @media print {
     @page {
         size: A4 landscape
+    }
+
+    .monster-list, .monster-editor {
+        display: none
     }
 
     .recto {

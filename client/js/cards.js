@@ -132,7 +132,7 @@ CardEditor = CardEditor = Vue.component('CardEditor', {
 	mounted() {
 		this.$root.$on('edit-intend', (monster) => {this.loadcard(monster)})
 	},
-	template: `<div style="float: right; margin: 20px;" v-if="raw">
+	template: `<div style="float: right; margin: 20px;" v-if="raw" class="monster-editor">
               <h1>edit</h1>
 	      <textarea name="raw_textarea" rows="20" cols="40" v-model="raw"></textarea>
 	      <br>

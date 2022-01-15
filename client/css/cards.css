@@ -581,7 +581,7 @@ h2.badge-bottom {
         size: A4 landscape
     }
 
-    .monster-list, .monster-editor {
+    .monster-list, .monster-editor, footer {
         display: none
     }
 

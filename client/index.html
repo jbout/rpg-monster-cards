@@ -14,11 +14,13 @@
 
 <body>
     <main id="app">
+	    <header></header>
     	<monsterlibrary v-on:addmonster = "addCard"></monsterlibrary>
     	<cardeditor></cardeditor>
         <div class="grid-container">
             <card v-for="entry in cards" v-bind:entry="entry"/>
         </div>
+        <footer>Cards created based on data provided by Wizards of the Coast, Inc under the <a href="https://web.archive.org/web/20160302062643/http://www.wizards.com/d20/files/OGLv1.0a.rtf">Open Game License</a>. This page is not affiliated with Wizards of the Coast, Inc. </footer>
     </main>
     <script src="js/cards.js"></script>
 </body>

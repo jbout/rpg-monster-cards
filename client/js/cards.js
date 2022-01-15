@@ -62,7 +62,7 @@ Vue.component('card', {
                             </tr>
                             <tr class="pre-ultimate">
                                 <td>Init</td>
-                                <td class="value">{{entry.initiative_bonus}}</td>
+                                <td class="value">{{entry.ini}}</td>
                                 <td>Speed</td>
                                 <td class="value">{{entry.speed}}
                                     feet</td>
@@ -99,7 +99,12 @@ MonsterLibrary = Vue.component('MonsterLibrary', {
 	  })
 	},
   	template: `<div  style="float: left; margin: 20px;" class="monster-list">
-  				<h3>Add monsters</h3>
+  				<h3>Monster Library</h3>
+  				<select @change="changeSort($event)">
+  					<option value="name">Alphabetically</option>
+  					<option value="cr">By Challenge Rating</option>
+<!--				<option value="env">By Environment</option> -->
+  				</select>
   				<ul>
                 <monster v-for="monsterdata in data" v-bind:monsterdata="monsterdata" v-on:addmonster = "propagate"/>
   				</ul>
@@ -107,12 +112,24 @@ MonsterLibrary = Vue.component('MonsterLibrary', {
 	methods: {
 		propagate : function(monster) {
 	        this.$emit('addmonster', monster)
+		},
+		changeSort : function(event) {
+	        sortby = event.srcElement.value
+			this.data.sort(function(a, b){
+			if (a[sortby] < b[sortby]) {
+				return -1;
+			}
+			if (a[sortby] > b[sortby]) {
+				return 1;
+			}
+			return 0;
+			});
 		}
 	},
 	components : {
 		'monster' : {
 			props: ['monsterdata'],
-			template: `<li><button v-on:click="addCard">{{monsterdata.name}}</button></li>`,
+			template: `<li><button v-on:click="addCard">{{monsterdata.name}}</button> <span class="challenge-rating">{{monsterdata.cr}}</span></li>`,
 			methods: {
 				addCard : function(card) {
 			        this.$emit('addmonster', this.monsterdata)
@@ -157,8 +174,6 @@ var app = new Vue({
 	el : '#app',
 	data : {
 		cards: [],
-		source : '[\n  {\n    "name": "Goblin",\n    "base": "Small Humanoid",\n    "hp": "5",\n    "current_hp": "5",\n    "ac": "15",\n    "initiative_bonus": "1",\n    "attack_parameters": "club +2/d6",\n    "str": "11",\n    "dex": "13",\n    "con": "12",\n    "int": "10",\n    "wis": "9",\n    "cha": "6",\n    "fort": "3",\n    "reflex": "1",\n    "will": "-1",\n    "speed": "30",\n    "cr": "⅓",\n    "img": "http://www.wizards.com/dnd/images/MM35_gallery/MM35_PG133.jpg",\n    "notes": "Hide +5, Listen +2, Move Silently +5, Ride +4, Spot +2"\n  }\n]',
-    source_srd : ''
 	},
 	methods : {
 		addCard : function(card) {
